@@ -28,7 +28,7 @@ class _AuthenState extends State<Authen> {
                   newAppName(),
                   newUser(),
                   newPassword(),
-                  newLogih(),
+                  newLogin(),
                   newCreateAccount()
                 ],
               ),
@@ -52,7 +52,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Container newLogih() {
+  Container newLogin() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16),
       width: 300,

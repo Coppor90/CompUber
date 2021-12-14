@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:compseviceuber/models/user_model.dart';
 import 'package:compseviceuber/utility/my_constant.dart';
 import 'package:compseviceuber/utility/my_dialog.dart';
 import 'package:compseviceuber/widgets/show_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,13 +20,17 @@ class _CreateAccountState extends State<CreateAccount> {
   String? typeUser;
   double? lat, lng;
   final formKey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   Container newName() {
     return Container(
       decoration: Myconstant().whiteBox(),
-      margin: EdgeInsets.only(top: 16),
+      margin: const EdgeInsets.only(top: 16),
       width: 250,
       child: TextFormField(
+        controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'กรุณากรอก ชื่อด้วยค่ะ';
@@ -35,8 +43,8 @@ class _CreateAccountState extends State<CreateAccount> {
             Icons.fingerprint,
             color: Myconstant.dark,
           ),
-          label: ShowText(data: 'Name :'),
-          border: OutlineInputBorder(),
+          label: const ShowText(data: 'Name :'),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -45,9 +53,11 @@ class _CreateAccountState extends State<CreateAccount> {
   Container newEmail() {
     return Container(
       decoration: Myconstant().whiteBox(),
-      margin: EdgeInsets.only(top: 16),
+      margin: const EdgeInsets.only(top: 16),
       width: 250,
-      child: TextFormField(validator: (value) {
+      child: TextFormField(
+        controller: emailController,
+        validator: (value) {
           if (value!.isEmpty) {
             return 'กรุณากรอก Emailด้วยค่ะ';
           } else {
@@ -59,8 +69,8 @@ class _CreateAccountState extends State<CreateAccount> {
             Icons.email_outlined,
             color: Myconstant.dark,
           ),
-          label: ShowText(data: 'Email :'),
-          border: OutlineInputBorder(),
+          label: const ShowText(data: 'Email :'),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -69,9 +79,11 @@ class _CreateAccountState extends State<CreateAccount> {
   Container newPassword() {
     return Container(
       decoration: Myconstant().whiteBox(),
-      margin: EdgeInsets.only(top: 16),
+      margin: const EdgeInsets.only(top: 16),
       width: 250,
-      child: TextFormField(validator: (value) {
+      child: TextFormField(
+        controller: passwordController,
+        validator: (value) {
           if (value!.isEmpty) {
             return 'กรุณากรอก Password ด้วยค่ะ';
           } else {
@@ -83,8 +95,8 @@ class _CreateAccountState extends State<CreateAccount> {
             Icons.password_outlined,
             color: Myconstant.dark,
           ),
-          label: ShowText(data: 'Password :'),
-          border: OutlineInputBorder(),
+          label: const ShowText(data: 'Password :'),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -119,7 +131,12 @@ class _CreateAccountState extends State<CreateAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(actions: [IconButton(onPressed: () => processRegiter(), icon: const Icon(Icons.cloud_download_outlined))],
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () => processRegiter(),
+              icon: const Icon(Icons.cloud_download_outlined))
+        ],
         backgroundColor: Myconstant.primary,
         title: const Text('Create New Account'),
       ),
@@ -188,11 +205,42 @@ class _CreateAccountState extends State<CreateAccount> {
     );
   }
 
-  void processRegiter() {
+  Future<void> processRegiter() async {
     if (formKey.currentState!.validate()) {
       if (typeUser == null) {
-        Mydialog().normalDialog(context, 'type User Non?', 'Please Choose Type User');
+        Mydialog()
+            .normalDialog(context, 'type User Non?', 'Please Choose Type User');
       } else {
+        await Firebase.initializeApp().then((value) async {
+          print('Initial Success');
+          await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                  email: emailController.text,
+                  password: passwordController.text)
+              .then((value) async {
+            String uid = value.user!.uid;
+
+            print('Register Sucess uid ==> $uid ');
+
+            UserModel model = UserModel(
+                email: emailController.text,
+                lat: lat!,
+                lng: lng!,
+                name: nameController.text,
+                password: passwordController.text,
+                typeuser: typeUser!);
+
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc(uid)
+                .set(model.toMap())
+                .then((value) => Navigator.pop(context));
+          }).catchError((value) {
+            String title = value.code;
+            String message = value.message;
+            Mydialog().normalDialog(context, title, message);
+          });
+        });
       }
     }
   }

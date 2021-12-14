@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "98263695234",
+    "project_id": "compuber-c86f7",
+    "storage_bucket": "compuber-c86f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98263695234:android:da00ae1c2ab29fe5cc199b",
+        "android_client_info": {
+          "package_name": "com.flutterthailamd.compseviceuber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98263695234-07cnemal4jgsr2jas9upmb45191f9ckt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgRH0Qkke_cl5JAqLPWVNcHt8UAKXu0Bo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98263695234-07cnemal4jgsr2jas9upmb45191f9ckt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class Myconstant {
   // field
   static String appName = 'Comp Uber';
-  static Color primary = const Color(0xff64dd17);
+  static Color primary = const Color(0xff00c2cb);
   static Color light = const Color(0xff0097a7);
   static Color dark = const Color(0xff004d40);
 
   // method
-  BoxDecoration planBox() => BoxDecoration(color: light);
+  BoxDecoration planBox() => BoxDecoration(color: primary);
 
   BoxDecoration whiteBox() => BoxDecoration(color: Colors.white54);
 
